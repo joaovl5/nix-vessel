@@ -40,4 +40,5 @@ _: rec {
     ;
 
   get-env = builtins.getEnv;
+  to-str = builtins.toString;
 }

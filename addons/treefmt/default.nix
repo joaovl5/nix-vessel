@@ -29,9 +29,9 @@ in
         w-toggle
         |> w-desc "Enable 'treefmt' addon for `treefmt-nix` integration";
       input-name =
-        package
+        str
         |> opt
-        |> w-def pkgs.gum
+        |> w-def "treefmt"
         |> w-desc "Name of the treefmt input for consumption";
       root-file =
         str
@@ -53,7 +53,7 @@ in
         } or (err.required-k "inputs.${cfg.input-name}" ''
           Treefmt addon needs an input agreeing with its `input-name` option.
         '');
-      treefmt-mod = treefmt-input pkgs ({
+      treefmt-mod = treefmt-input.evalModule pkgs ({
           projectRootFile = cfg.root-file;
         }
         // cfg.config);

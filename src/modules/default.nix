@@ -24,6 +24,7 @@
     opt
     package
     raw
+    to-str
     w-cfg
     w-def
     w-desc
@@ -222,7 +223,7 @@ in
           # bash
           ''
             NIX_VESSEL_LOG_LEVEL=${log-level}
-            NIX_VESSEL_LOG_NONINTERACTIVE=${log-non-interactive}
+            NIX_VESSEL_LOG_NONINTERACTIVE=${to-str log-non-interactive}
           ''
           (when-str (log-level == "trace") "set -x")
           (mk-log "info" "Starting nix shell...")
