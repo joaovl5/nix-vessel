@@ -1,21 +1,31 @@
 {
   pkgs,
   modules ? [],
+  addons ? [],
+  inputs ? {},
   ...
 }: let
-  inherit (pkgs) lib;
+  f = import ./lib/fancy {inherit pkgs;};
 
-  fancy = import ./lib/fancy {inherit pkgs;};
-
+  mapped-addons = addons |> map (x: ../addons/${x});
   eval =
-    fancy.mod-eval
-    ([./modules] ++ modules)
-    {inherit pkgs lib fancy;}
+    f.mod-eval
+    ([./modules] ++ modules ++ mapped-addons)
+    {
+      inherit
+        pkgs
+        inputs
+        ;
+      inherit (pkgs) lib;
+      fancy = f;
+    }
     {};
 
   cfg = eval.config;
 in
   pkgs.mkShell {
-    inherit (cfg) packages;
+    packages =
+      cfg.packages
+      |> f.sort-by (x: x.meta.priority or f.default-prio);
     shellHook = cfg.shell-hook;
   }
