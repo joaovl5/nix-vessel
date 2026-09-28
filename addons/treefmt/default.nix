@@ -52,7 +52,15 @@ in
         } or (err.required-k "inputs.${cfg.input-name}" ''
           Treefmt addon needs an input agreeing with its `input-name` option.
         '');
-      treefmt-mod = treefmt-input.evalModule pkgs ({
+      # we do this because treefmt-nix exposes things differently between their
+      # flake and non-flake outputs
+      eval-fn =
+        treefmt-input.evalModule
+        or treefmt-input.lib.evalModule
+        or (err.required-k "treefmt.[lib].evalModule" ''
+          Couldn't find treefmt-nix's 'evalModule' function!
+        '');
+      treefmt-mod = eval-fn pkgs ({
           projectRootFile = cfg.root-file;
         }
         // cfg.config);
