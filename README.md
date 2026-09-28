@@ -14,8 +14,35 @@ To that end, the core of the library offers only the basics, and any additional 
 
 ## Add-ons
 
-<!-- TODO -->
+These are pieces of additional/alternative functionality for the `nix-vessel` shell - they are not included in the base library to adhere to the minimal ideals of the project.
+
+For including an addon, just append its name as a string to the `addons` parameter when invoking `nix-vessel`:
+
+```nix
+{
+
+  inputs = { /* ... */ };
+  addons = [
+    "gum" # see what this does in the list below
+  ];
+}
+```
+
+Some outputs might also require inputs, like `treefmt`, which can be customized via its `treefmt.input-name` option.
+
+This is the list of addons currently available:
+
+| Addon Name    | What it does              | Requirements/Conflicts |
+|---------------|---------------------------|------------------------|
+| `gum`         | Switches baseline loggers and other shell I/O features with prettier versions, using the `gum` CLI tool. | |
+| `treefmt`     | Integrates with `treefmt-nix` and adds its wrapped package to the environment. | `treefmt-nix` in inputs |
+| `prek-hooks`  | Manages the `prek` git-hooks tool and manages automatic hooks installation | |
+
+## Known Issues
+
+- **nix-your-shell** and **nix-output-monitor** (nom): it may, in some configurations, spawn two shells, which may lead to duplicate messages and unpredictable behavior
 
 ## Credits
 
 - [devenv](https://github.com/cachix/devenv) - Main inspiration for project, a source of its source-code was studied for learning
+- [git-hooks.nix](https://github.com/cachix/git-hooks.nix) - Inspiration for making the `prek-hooks` addon

@@ -6,6 +6,7 @@
   inherit
     (fancy)
     mod-bake
+    read-file
     mod-ns
     force
     opt
@@ -20,7 +21,7 @@
     ;
 in
   mod-bake args (mod-ns ["gum"]
-    |> w-opts (_: {
+    |> w-opts {
       enable =
         w-toggle
         |> w-desc "Enable 'Gum' addon for prettier outputs";
@@ -48,32 +49,20 @@ in
           |> w-def "nix-vessel"
           |> w-desc "Prefix for logged messages, omitted if empty.";
       };
-    })
+    }
     |> w-cfg ({cfg, ...}: (when cfg.enable {
       packages = [cfg.package];
       vessel.hooks = {
+        logger-deps = [cfg.package];
         logger =
           when cfg.log.enable
           <| force
-          <| (log-level: message: let
-            # convert to gum's log level
-            lvl-to-gum = {
-              "error" = "error";
-              "warn" = "warn";
-              "info" = "info";
-              "debug" = "debug";
-              # there's no 'trace' equivalent in gum
-              "trace" = "debug";
-            };
-            gum-lvl = lvl-to-gum.${log-level};
-          in
-            # bash
-            ''
-              gum log \
-                --time ${cfg.log.time} \
-                --prefix ${cfg.log.prefix} \
-                --level ${gum-lvl} \
-                "${message}"
-            '');
+          <| # bash
+          ''
+            GUM_LOG_TIME="${cfg.log.time}"
+            GUM_LOG_PREFIX="${cfg.log.prefix}"
+
+            ${read-file ./gum-logger.sh}
+          '';
       };
     })))

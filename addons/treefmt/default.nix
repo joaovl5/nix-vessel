@@ -19,7 +19,6 @@
     when
     w-opts
     w-toggle
-    package
     err
     ;
 in
