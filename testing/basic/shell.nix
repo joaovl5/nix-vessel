@@ -1,5 +1,5 @@
 {pkgs ? import <nixpkgs> {}}:
-import ../../src {
+(import ../../src).mk-shell {
   inherit pkgs;
   inputs = {
     treefmt =
