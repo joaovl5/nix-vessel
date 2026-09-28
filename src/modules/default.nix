@@ -6,6 +6,8 @@
   inherit
     (fancy)
     # keep-sorted start
+    attr-values
+    attrs
     dedupe
     do-at
     elem
@@ -13,12 +15,15 @@
     flatten
     lines
     list
+    map-attrs
     merge-lines
     mk-search-path
     mod-bake
     mod-ns
     opt
     package
+    str
+    to-shell-var
     w-cfg
     w-def
     w-desc
@@ -80,6 +85,12 @@ in
         |> opt
         |> w-def ""
         |> w-desc "Bash lines appended to shell hook.";
+      env =
+        str
+        |> attrs
+        |> opt
+        |> w-def {}
+        |> w-desc "Environment variables to have in the shell";
       # some QoL improvements to shells
       fixes = {
         man-pages =
@@ -115,6 +126,18 @@ in
             in
               # bash
               "export MANPATH=\"${man-path}:\${MANPATH:+$MANPATH:}\""))
+
+          ### Handle env-vars
+          (when-str (cfg.env != {})
+            <| merge-lines
+            <| attr-values
+            <| map-attrs (
+              k: v: ''
+                ${to-shell-var k v}
+                export ${k}
+              ''
+            )
+            <| cfg.env)
         ]
         |> filter (x: x != "")
         |> merge-lines
