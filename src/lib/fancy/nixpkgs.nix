@@ -200,11 +200,12 @@
         chars-start + line-text + chars-end
       );
       _header_echo =
-        header.text
-        |> _strings.split-str "\n"
-        |> map (_mk_comment_line header.chars-start header.chars-end)
-        |> map (x: "echo " + (x |> _strings.escape-shell-str) + ";")
-        |> _strings.merge-lines;
+        _strings.when-str (header.enable or false)
+        (header.text
+          |> _strings.split-str "\n"
+          |> map (_mk_comment_line header.chars-start header.chars-end)
+          |> map (x: "echo " + (x |> _strings.escape-shell-str) + ";")
+          |> _strings.merge-lines);
 
       _run-args =
         _attrsets.deep-merge
@@ -237,6 +238,45 @@
           input-content
           yj-args
           ;
+      });
+    write-yaml = {
+      filename,
+      input-content,
+      yj-args ? "-jy",
+      args ? {},
+    }:
+      _run-yj (_attrsets.deep-merge args {
+        inherit
+          filename
+          input-content
+          yj-args
+          ;
+      });
+    write-json = {
+      filename,
+      input-content,
+      yj-args ? "-jj -i",
+      header-ok ? false,
+      args ? {},
+    }:
+      _run-yj (_attrsets.deep-merge args {
+        inherit
+          filename
+          input-content
+          yj-args
+          ;
+        header =
+          if header-ok
+          then {
+            enable = true;
+            chars-start = "// ";
+            chars-end = "";
+          }
+          else {
+            enable = false;
+            chars-start = "";
+            chars-end = "";
+          };
       });
     run-cmd = {
       filename,

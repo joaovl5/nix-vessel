@@ -17,6 +17,19 @@
         ruby
       ];
 
+      file."config.yml" = {
+        type = "yaml";
+        data = {
+          a.b.c.d = [1 2 3 4];
+          a.b.d.e = {
+            foo = "bar";
+            bar = "foo";
+            yes = false;
+            no = true;
+          };
+        };
+      };
+
       shell-hook =
         # bash
         ''

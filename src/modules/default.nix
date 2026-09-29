@@ -103,6 +103,7 @@ in
     })
     |> w-imports [
       ./logging
+      ./files
     ]
     |> w-cfg ({cfg, ...}: {
       shell-hook =
