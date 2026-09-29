@@ -62,6 +62,7 @@ in
     })
     |> w-cfg ({cfg, ...}: (when cfg.enable (let
       raw-config = {
+        # TODO: later
         "repos" = [
           {
             repo = "builtin";
