@@ -119,10 +119,24 @@ add_direnv_hook() {
   printf "Added %s hook to %s.\n" "$SHELL_NAME" "$CONFIG_FILE"
 }
 
+add_direnv_cfg() {
+  DIRENV_CFG_PATH=${XDG_CONFIG_HOME:-"$HOME/.config"}/direnv/direnv.toml
+  DIRENV_CFG='[global]
+  log_filter = "^$"
+  log_format = "-"'
+
+  mkdir -p "$(dirname "$DIRENV_CFG_PATH")"
+  if ! [ -f "$DIRENV_CFG_PATH" ]; then
+    printf "\n%s\n" "$DIRENV_CFG" >"$DIRENV_CFG_PATH"
+  fi
+}
+
 setup_direnv() {
   printf "Setting up direnv...\n"
 
   nix profile add nixpkgs#direnv
+
+  add_direnv_cfg
 
   add_direnv_hook \
     "bash" \
