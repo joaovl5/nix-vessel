@@ -130,11 +130,10 @@ in
             # TODO: MOVE elsewhere
             # nom-shell (and its hooks) duplicate shells which causes weird issues
             # we generally do not want this to happen
-            if ! [[ -t 1 ]]; then
-              exit
-            fi
-            if [[ -t 1 || $NIX_VESSEL_LOG_NONINTERACTIVE == true ]]; then
+            if [[ -t 1 || ${"$"}{NIX_VESSEL_LOG_NONINTERACTIVE:-false} == true ]]; then
               export NIX_VESSEL_DO_LOGS=true
+            else
+              exit
             fi
 
             if [[ $NIX_VESSEL_LOG_LEVEL == "trace" ]]; then
