@@ -13,7 +13,7 @@ setup_nix() {
   NIX_DAEMON_PROFILE="/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 
   if ! command -v nix >/dev/null 2>&1 &&
-    [ -r "$NIX_DAEMON_PROFILE"]; then
+    [ -r "$NIX_DAEMON_PROFILE" ]; then
     . "$NIX_DAEMON_PROFILE"
   fi
 
