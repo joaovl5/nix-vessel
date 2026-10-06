@@ -53,16 +53,6 @@ in
             Increases log level, with `trace` being of highest verbosity.
             The envvar `NIX_VESSEL_LOG_LEVEL` also is used and takes precedence.
           '';
-
-        non-interactive =
-          w-toggle'
-          |> w-desc ''
-            Whether to also record logs in non-interactive shells, disabled by default.
-
-            This is to prevent duplicate shells (like `nom-shell` does) from making log
-            records duplicated, but might be useful to disable in, for instance, cases
-            running the shell in a CI/CD pipeline.
-          '';
       };
       hooks = {
         logger-deps =
@@ -97,8 +87,6 @@ in
       };
     }
     |> w-cfg ({cfg, ...}: let
-      _non-interactive =
-        env-or "NIX_VESSEL_LOG_NONINTERACTIVE" cfg.log.non-interactive;
       _level =
         env-or "NIX_VESSEL_LOG_LEVEL" cfg.log.level;
       logger-script =
@@ -122,20 +110,6 @@ in
           # bash
           ''
             export NIX_VESSEL_LOG_LEVEL=${_level}
-            export NIX_VESSEL_LOG_NONINTERACTIVE=${
-              if type-of _non-interactive == "string"
-              then _non-interactive
-              else str-from-bool _non-interactive
-            }
-            # TODO: MOVE elsewhere
-            # nom-shell (and its hooks) duplicate shells which causes weird issues
-            # we generally do not want this to happen
-            if [[ -t 1 || ${"$"}{NIX_VESSEL_LOG_NONINTERACTIVE:-false} == true ]]; then
-              export NIX_VESSEL_DO_LOGS=true
-            else
-              exit
-            fi
-
             if [[ $NIX_VESSEL_LOG_LEVEL == "trace" ]]; then
               set -x
               log trace "Trace logs enabled!"

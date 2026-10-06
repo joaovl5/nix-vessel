@@ -18,10 +18,6 @@ print_usage() {
   echo "Usage: $0 <error|warn|info|debug|trace> <message>" >&2
 }
 
-if [[ ${NIX_VESSEL_DO_LOGS:-false} != "true" ]]; then
-  exit 0
-fi
-
 if (($# != 2)); then
   print_usage
   exit 2
