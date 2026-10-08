@@ -78,8 +78,14 @@ in
         package
         |> list
         |> opt
-        |> w-def {}
+        |> w-def []
         |> w-desc "Packages to include in the dev shell.";
+      inputs-from =
+        package
+        |> list
+        |> opt
+        |> w-def []
+        |> w-desc "Packages to include in mkShell's `inputsFrom`.";
       shell-hook =
         lines
         |> opt
@@ -121,6 +127,7 @@ in
           (when-str cfg.fixes.man-pages
             (let
               man-path =
+                # TODO: figure out if/how inputs-from should also be handled here
                 map drv-paths cfg.packages
                 |> flatten
                 |> mk-search-path "share/man";

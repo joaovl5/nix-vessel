@@ -27,5 +27,6 @@ in
     packages =
       cfg.packages
       |> f.sort-by (x: x.meta.priority or f.default-prio);
+    inputsFrom = cfg.inputs-from;
     shellHook = cfg.shell-hook;
   }
